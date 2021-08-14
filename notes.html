@@ -68,9 +68,11 @@
         
         <button type="submit" id="add" class="btn btn-primary">Add into List</button>
   
-
+        <div class="text my-4" id="text_p">
+          </div>
       <div id="items" class="my-4">
-          <h2>Your Todo List</h2>
+        
+          <h2 id="h2">Your Todo List</h2>
 
           <table class="table table-striped" id="table">
             <thead>
@@ -82,7 +84,7 @@
                 </tr>
               </thead>
               <tbody id="t_body">
-               
+                   
               </tbody>
             
           </table>
@@ -115,28 +117,40 @@
 
 
     let title= document.getElementById('title').value;
-let desc= document.getElementById('desc').value;
+    let desc= document.getElementById('desc').value;
+
 
 
 if(localStorage.getItem("itemsJson")==null){
    
     itemArray=[];
+
+    if(title=="" || desc==""){
+   alert("Please enter the value for title and Description");
+}
+else{
     itemArray.push([title,desc]);
     localStorage.setItem("itemsJson",JSON.stringify(itemArray));
-    console.log("item stored");
-   
-   
+    view();
+}
+}
 
+
+else{
+
+  if(title=="" || desc==""){
+   alert("Please enter the value for title and Description");
 }
 else{
     itemArraystr=localStorage.getItem("itemsJson");
     itemArray=JSON.parse(itemArraystr);
     itemArray.push([title,desc]);
     localStorage.setItem("itemsJson",JSON.stringify(itemArray));
-   
-
+    
+    view();
 }
-view();
+}
+
 
  }
 
@@ -146,21 +160,35 @@ view();
 function view(){
 
     let table= document.getElementById('table');
+    let items = document.getElementById("items");
+    let text_p = document.getElementById('text_p');
 
     if(localStorage.getItem("itemsJson")==null){
         
         itemArray=[];
-      table.style.visibility="hidden";
+        items.style.opacity="0";
+        text_p.innerHTML="<p>Nothing to display here, please add an note to your ToDo List</p>";
+        text_p.style.display="block";
+    
+     
+
+}else if(localStorage.getItem("itemsJson")=="[]"){
+  localStorage.clear();
+  view();
 }
 
 else{
-    table.style.visibility="0";
+  items.style.opacity="1";
     itemArraystr=localStorage.getItem("itemsJson");
     itemArray=JSON.parse(itemArraystr);
-    console.log("function  call on click");
-    // console.log(table);
+    text_p.style.display="none";
+    // let items = document.getElementById("items").innerHTML="";
+ 
 
 }
+
+  let title= document.getElementById('title').value="";
+  let desc= document.getElementById('desc').value="";
 
 
 
@@ -172,7 +200,7 @@ itemArray.forEach((element,index) => {
 
     
  html+=`  <tr>
-                  <th scope="row">${index+1}</th>
+                 <th scope="row">${index+1}</th>
                   <td>${element[0]}</td>
                   <td>${element[1]}</td>
                   <td><button class="btn btn-primary" onclick="deleted(${index})">Delete</button></td>
@@ -194,12 +222,11 @@ view();
 
 function deleted(item){
     // fetch the array
-    console.log(item);
     itemArraystr=localStorage.getItem("itemsJson");
     itemArray=JSON.parse(itemArraystr);
 
     // delete the item at the fetched index
-
+    
     itemArray.splice(item,1);
     // update the localStorage
     localStorage.setItem("itemsJson",JSON.stringify(itemArray));
